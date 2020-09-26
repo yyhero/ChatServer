@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	// 全局客户端的id，从1开始进行自增
+	// 全局客户端的id，从1000开始进行自增
 	globalClientId int32 = 1000
 
 	// 字节的大小端顺序
@@ -56,19 +56,16 @@ type Client struct {
 }
 
 // 新建客户端对象
-// conn：连接对象
-// 返回值：客户端对象的指针
 func NewClient(_conn net.Conn) *Client {
 	return &Client{
 		Id:                   getIncrementId(),
 		Conn:                 _conn,
 		connStatus:           con_Open,
 		receiveData:          make([]byte, 0, 1024),
-		sendData:             make([]*SocketResponseObject, 0, 16),
+		sendData:             make([]*SocketResponseObject, 0, 32),
 	}
 }
 
-// 获取唯一标识
 func (c *Client) GetId() int32 {
 	return c.Id
 }
@@ -88,23 +85,19 @@ func (c *Client) GetLoginTs() string{
 	return fmt.Sprintf("%02dd %02dh %02dm %02ds", d, h, m, s)
 }
 
-// 获取远程地址（IP_Port）
 func (clientObj *Client) getRemoteAddr() string {
 	items := strings.Split(clientObj.Conn.RemoteAddr().String(), ":")
 	return fmt.Sprintf("%s_%s", items[0], items[1])
 }
 
-// 获取远程地址（IP）
 func (clientObj *Client) getRemoteShortAddr() string {
 	items := strings.Split(clientObj.Conn.RemoteAddr().String(), ":")
 	return items[0]
 }
 
-// 追加发送的数据
 func (clientObj *Client) appendSendData(responseObj *SocketResponseObject) {
 	clientObj.mutex.Lock()
 	defer clientObj.mutex.Unlock()
-
 	clientObj.sendData = append(clientObj.sendData, responseObj)
 }
 
@@ -112,7 +105,6 @@ func (clientObj *Client) SendMsg(responseObj *SocketResponseObject) {
 	clientObj.appendSendData(responseObj)
 }
 
-// 追加接收到的数据
 func (clientObj *Client) AppendReceiveData(receiveData []byte) {
 	clientObj.receiveData = append(clientObj.receiveData, receiveData...)
 	atomic.AddInt64(&totalReceiveSize, int64(len(receiveData)))
@@ -202,24 +194,19 @@ func (clientObj *Client) setConnStatus(status ConnStatus) {
 	clientObj.connStatus = status
 }
 
-
-// 格式化
 func (clientObj *Client) String() string {
 	return fmt.Sprintf("{Id:%d, RemoteAddr:%d}", clientObj.Id, clientObj.getRemoteAddr())
 }
 
 func BytesToInt32(b []byte, order binary.ByteOrder) int32 {
-	bytesBuffer := bytes.NewBuffer(b)
-
 	var result int32
-	binary.Read(bytesBuffer, order, &result)
-
+	bytesBuffer := bytes.NewBuffer(b)
+	_ = binary.Read(bytesBuffer, order, &result)
 	return result
 }
 
 func Int32ToBytes(n int32, order binary.ByteOrder) []byte {
 	bytesBuffer := bytes.NewBuffer([]byte{})
-	binary.Write(bytesBuffer, order, n)
-
+	_ = binary.Write(bytesBuffer, order, n)
 	return bytesBuffer.Bytes()
 }

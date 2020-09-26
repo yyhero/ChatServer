@@ -19,7 +19,6 @@ var (
 )
 
 // 添加新的客户端
-// clientObj：客户端对象
 func registerClient(clientObj *Client) {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -28,8 +27,6 @@ func registerClient(clientObj *Client) {
 }
 
 // 根据客户端Id获取对应的客户端对象
-// id：客户端Id
-// 返回值：客户端对象
 func GetClient(id int32) (*Client, bool) {
 	mutex.RLock()
 	defer mutex.RUnlock()
@@ -37,7 +34,6 @@ func GetClient(id int32) (*Client, bool) {
 	if clientObj, ok := clientMap[id]; ok {
 		return clientObj, true
 	}
-
 	return nil, false
 }
 

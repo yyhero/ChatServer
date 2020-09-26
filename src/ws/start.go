@@ -23,7 +23,6 @@ func StartServer(wg *sync.WaitGroup, address string) {
 	}
 
 	for {
-		// 阻塞直至新连接到来
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Printf("Accept Error: %s", err)

@@ -66,8 +66,5 @@ type SocketRequest struct {
 }
 
 func NewSocketRequest(commandType model.CommandType, data map[string]interface{})  *SocketRequest{
-	//if data == nil{
-	//	data = make(map[string]interface{},0)
-	//}
 	return &SocketRequest{CommandType:commandType, Command:data}
 }
