@@ -16,14 +16,16 @@ type Room struct {
 	RoomId int64
 	players   map[int32]*ws.Client
 	msgs []*model.Message
+	msgLen int
 	mutex sync.RWMutex
 }
 
 func newRoom(id int64)  *Room{
 	return &Room{
 		players:make(map[int32]*ws.Client),
-		msgs:make([]*model.Message, 0, 100),
+		msgs:make([]*model.Message, 0),
 		RoomId:id,
+		msgLen:1000,
 	}
 }
 
@@ -49,6 +51,10 @@ func (this *Room)GetHistory() []*model.Message{
 func (this *Room) AddToMsgs(player *ws.Client, info string) *model.Message{
 	this.mutex.RLock()
 	defer this.mutex.RUnlock()
+
+	if len(this.msgs) >= this.msgLen{
+		this.msgs = this.msgs[1:]
+	}
 
 	msg := &model.Message{Ts:time.Now().Unix(), Msg:info}
 	this.msgs = append(this.msgs, msg)
