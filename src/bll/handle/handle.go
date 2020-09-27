@@ -84,10 +84,10 @@ func handlerSendMsg(clientObj *ws.Client, parameters map[string]interface{}) *ws
 }
 
 func handlerCommand(clientObj *ws.Client, parameters map[string]interface{}) *ws.SocketResponseObject {
-	ct, _ := parameters["CommandType"].(model.CommandType)
+	ct, _ := parameters["CommandType"].(float64)
 	commandMap, _ := parameters["Command"].(map[string]interface{})
 	cmd := commandMap["Cmd"].(string)
-	responseObj := ws.NewSocketResponseObject(ct)
+	responseObj := ws.NewSocketResponseObject(model.CommandType(ct))
 
 	switch  cmd{
 	case "/stats":
