@@ -4,9 +4,7 @@ package ws
 type ConnStatus int
 
 const (
-	// 打开状态
 	con_Open ConnStatus = 1 + iota
 
-	// 已经关闭
 	con_Close
 )

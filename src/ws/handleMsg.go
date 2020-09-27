@@ -14,7 +14,7 @@ import (
 func handleSendData(clientObj *Client) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r)
+			debug.PrintStack()
 		}
 	}()
 
@@ -49,11 +49,7 @@ func HandleConn(clientObj  *Client){
 			debug.PrintStack()
 		}
 	}()
-
-	// 将客户端对象添加到客户端增加的channel中
 	registerClient(clientObj)
-
-	// 启动处理数据的Goroutine
 	go handleSendData(clientObj)
 
 	for {
@@ -75,7 +71,6 @@ func HandleConn(clientObj  *Client){
 // 处理客户端收到的数据
 func HandleReceiveData(clientObj *Client) {
 	for {
-		// 获取有效的消息
 		message, exists := clientObj.GetReceiveData()
 		if !exists {
 			break

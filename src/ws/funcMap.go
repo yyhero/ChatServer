@@ -11,10 +11,7 @@ var (
 
 // 请求方法对象
 type requestFunc struct {
-	// 方法名称
 	funcName string
-
-	// 方法定义
 	funcDefinition func(*Client, map[string]interface{}) *SocketResponseObject
 }
 
