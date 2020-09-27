@@ -30,7 +30,7 @@ func TestChat(t *testing.T) {
 	createRoom(client)
 
 	// chat
-	chat(client,"fcuk, boy!!!!")
+	chat(client,"fcuk, the bad weather!!!!")
 
 	time.Sleep(5* time.Second)
 }
@@ -53,7 +53,6 @@ func TestBroadChat(t *testing.T)  {
 	var roomId int64
 	select {
 	case resp := <-receChan:
-		fmt.Printf("receive msg:%v", resp)
 		if resp.CommandType == model.CreateRoom{
 			data := resp.Data.(map[string]interface{})
 			roomId = int64(data["RoomId"].(float64))
@@ -68,7 +67,7 @@ func TestBroadChat(t *testing.T)  {
 	}
 
 	//chat
-	chat(testC, "fcuk, girls!!!!!")
+	chat(testC, "fcuk, the bad weather!!!!!")
 	time.Sleep(5*time.Second)
 }
 
@@ -84,7 +83,6 @@ func TestLatestMsg(t *testing.T) {
 	var roomId int64
 	select {
 	case resp := <-receChan:
-		fmt.Printf("clientId:%v, receive msg:%v", testA.Id,resp)
 		if resp.CommandType == model.CreateRoom{
 			data := resp.Data.(map[string]interface{})
 			roomId = int64(data["RoomId"].(float64))

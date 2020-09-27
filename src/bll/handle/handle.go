@@ -5,7 +5,6 @@ import (
 	"ChatServer/src/bll/sensitive"
 	"ChatServer/src/model"
 	"ChatServer/src/ws"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -46,9 +45,13 @@ func handlerJoinRoomByRoomId(clientObj *ws.Client, parameters map[string]interfa
 		return responseObj
 	}
 	clientObj.SetLoginTs(time.Now().Unix())
+
+	// send history msg
 	data := room.GetHistory()
 	if len(data) >0{
-		responseObj.SetData(data)
+		obj:= ws.NewSocketResponseObject(model.SendMessage)
+		obj.SetData(data)
+		clientObj.SendMsg(obj)
 	}
 
 	return responseObj
@@ -62,7 +65,6 @@ func handlerSendMsg(clientObj *ws.Client, parameters map[string]interface{}) *ws
 
 	room,exist := roomMgr.RoomManger.GetRoomByPlayer(clientObj)
 	if !exist{
-		fmt.Printf("i am here")
 		responseObj.SetResultStatus(model.Con_PlayerNotExist)
 		return responseObj
 	}
@@ -70,9 +72,10 @@ func handlerSendMsg(clientObj *ws.Client, parameters map[string]interface{}) *ws
 	str := sensitive.Replace(msg, '*')
 	data := room.AddToMsgs(clientObj, str)
 
+	// broadcast chat msg
 	players := room.GetAllPlayerExceptMe(clientObj)
 	for _, p := range players{
-		obj:= ws.NewSocketResponseObject(model.CommandType(ct))
+		obj:= ws.NewSocketResponseObject(model.SendMessage)
 		obj.SetData(data)
 		p.SendMsg(obj)
 	}
