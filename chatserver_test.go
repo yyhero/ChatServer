@@ -238,5 +238,5 @@ func newClient()  *ws.Client{
 func TestMain(m *testing.M) {
 	w.Add(1)
 	m.Run()
-	fmt.Println("end")
+	w.Wait()
 }
