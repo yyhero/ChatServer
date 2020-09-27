@@ -67,7 +67,8 @@ func handlerSendMsg(clientObj *ws.Client, parameters map[string]interface{}) *ws
 		return responseObj
 	}
 
-	str := sensitive.HandleSensitiveWords(msg)
+	//str := sensitive.HandleSensitiveWords(msg)
+	str := sensitive.Replace(msg, '*')
 	data := room.AddToMsgs(clientObj, str)
 
 	players := room.GetAllPlayerExceptMe(clientObj)
