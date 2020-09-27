@@ -85,28 +85,28 @@ func (c *Client) GetLoginTs() string{
 	return fmt.Sprintf("%02dd %02dh %02dm %02ds", d, h, m, s)
 }
 
-func (clientObj *Client) getRemoteAddr() string {
-	items := strings.Split(clientObj.Conn.RemoteAddr().String(), ":")
+func (c *Client) getRemoteAddr() string {
+	items := strings.Split(c.Conn.RemoteAddr().String(), ":")
 	return fmt.Sprintf("%s_%s", items[0], items[1])
 }
 
-func (clientObj *Client) getRemoteShortAddr() string {
-	items := strings.Split(clientObj.Conn.RemoteAddr().String(), ":")
+func (c *Client) getRemoteShortAddr() string {
+	items := strings.Split(c.Conn.RemoteAddr().String(), ":")
 	return items[0]
 }
 
-func (clientObj *Client) appendSendData(responseObj *SocketResponseObject) {
-	clientObj.mutex.Lock()
-	defer clientObj.mutex.Unlock()
-	clientObj.sendData = append(clientObj.sendData, responseObj)
+func (c *Client) appendSendData(responseObj *SocketResponseObject) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.sendData = append(c.sendData, responseObj)
 }
 
-func (clientObj *Client) SendMsg(responseObj *SocketResponseObject) {
-	clientObj.appendSendData(responseObj)
+func (c *Client) SendMsg(responseObj *SocketResponseObject) {
+	c.appendSendData(responseObj)
 }
 
-func (clientObj *Client) AppendReceiveData(receiveData []byte) {
-	clientObj.receiveData = append(clientObj.receiveData, receiveData...)
+func (c *Client) AppendReceiveData(receiveData []byte) {
+	c.receiveData = append(c.receiveData, receiveData...)
 	atomic.AddInt64(&totalReceiveSize, int64(len(receiveData)))
 }
 
@@ -137,7 +137,7 @@ func (c *Client) GetReceiveData() ([]byte, bool) {
 }
 
 // 发送字节数组消息
-func (clientObj *Client) SendBytes(b []byte) error {
+func (c *Client) SendBytes(b []byte) error {
 	// 获得数组的长度
 	contentLength := len(b)
 
@@ -151,7 +151,7 @@ func (clientObj *Client) SendBytes(b []byte) error {
 	atomic.AddInt64(&totalSendSize, int64(con_HEADER_LENGTH+contentLength))
 
 	// 发送消息
-	_, err := clientObj.Conn.Write(message)
+	_, err := c.Conn.Write(message)
 	if err != nil {
 		fmt.Printf("发送消息,%s,出现错误：%s", b, err)
 	}
@@ -160,42 +160,42 @@ func (clientObj *Client) SendBytes(b []byte) error {
 }
 
 // 发送字节数组消息
-func (clientObj *Client) sendMessage(responseObj *SocketResponseObject) error {
+func (c *Client) sendMessage(responseObj *SocketResponseObject) error {
 	b, err := json.Marshal(*responseObj)
 	if err != nil {
 		return errors.New("序列化response数据失败")
 	}
-	return  clientObj.SendBytes(b)
+	return  c.SendBytes(b)
 }
 
 // 获取待发送的数据
-func (clientObj *Client) getSendData() (responseObj *SocketResponseObject, exists bool) {
-	clientObj.mutex.Lock()
-	defer clientObj.mutex.Unlock()
+func (c *Client) getSendData() (responseObj *SocketResponseObject, exists bool) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 
 	// 如果没有数据则直接返回
-	if len(clientObj.sendData) == 0 {
+	if len(c.sendData) == 0 {
 		return
 	}
 
-	responseObj = clientObj.sendData[0]
+	responseObj = c.sendData[0]
 	exists = true
-	clientObj.sendData = clientObj.sendData[1:]
+	c.sendData = c.sendData[1:]
 	return
 }
 
 // 获取连接状态
-func (clientObj *Client) getConnStatus() ConnStatus {
-	return clientObj.connStatus
+func (c *Client) getConnStatus() ConnStatus {
+	return c.connStatus
 }
 
 // 设置连接状态
-func (clientObj *Client) setConnStatus(status ConnStatus) {
-	clientObj.connStatus = status
+func (c *Client) setConnStatus(status ConnStatus) {
+	c.connStatus = status
 }
 
-func (clientObj *Client) String() string {
-	return fmt.Sprintf("{Id:%d, RemoteAddr:%d}", clientObj.Id, clientObj.getRemoteAddr())
+func (c *Client) String() string {
+	return fmt.Sprintf("{Id:%d, RemoteAddr:%d}", c.Id, c.getRemoteAddr())
 }
 
 func BytesToInt32(b []byte, order binary.ByteOrder) int32 {

@@ -29,35 +29,32 @@ func NewSocketResponseObject(ct model.CommandType) *SocketResponseObject {
 	}
 }
 
-func (responseObject *SocketResponseObject) SetDataError() *SocketResponseObject {
-	return responseObject.SetResultStatus(model.Con_DataError)
+func (this *SocketResponseObject) SetDataError() *SocketResponseObject {
+	return this.SetResultStatus(model.Con_DataError)
 }
 
-func (responseObject *SocketResponseObject) SetAPIDataError() *SocketResponseObject {
-	return responseObject.SetResultStatus(model.Con_APIDataError)
+func (this *SocketResponseObject) SetAPIDataError() *SocketResponseObject {
+	return this.SetResultStatus(model.Con_APIDataError)
 }
 
-func (responseObject *SocketResponseObject) SetClientDataError() *SocketResponseObject {
-	return responseObject.SetResultStatus(model.Con_APIDataError)
+func (this *SocketResponseObject) SetClientDataError() *SocketResponseObject {
+	return this.SetResultStatus(model.Con_APIDataError)
 }
 
-func (responseObject *SocketResponseObject) SetResultStatus(rs model.ResultStatus) *SocketResponseObject {
-	responseObject.Code = rs
-	responseObject.Message = rs.String()
-
-	return responseObject
+func (this *SocketResponseObject) SetResultStatus(rs model.ResultStatus) *SocketResponseObject {
+	this.Code = rs
+	this.Message = rs.String()
+	return this
 }
 
-func (responseObject *SocketResponseObject) SetCommandType(ct model.CommandType) *SocketResponseObject {
-	responseObject.CommandType = ct
-
-	return responseObject
+func (this *SocketResponseObject) SetCommandType(ct model.CommandType) *SocketResponseObject {
+	this.CommandType = ct
+	return this
 }
 
-func (responseObject *SocketResponseObject) SetData(data interface{}) *SocketResponseObject {
-	responseObject.Data = data
-
-	return responseObject
+func (this *SocketResponseObject) SetData(data interface{}) *SocketResponseObject {
+	this.Data = data
+	return  this
 }
 
 type SocketRequest struct {
